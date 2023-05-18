@@ -8,4 +8,48 @@ body {
   font-family: 'Muli', sans-serif;
   overflow: hidden;
   margin: 0;
+  background: linear-gradient(to left,green, black);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  padding: 0 20px;
+}
+
+.slide {
+  height: 80vh;
+  border-radius: 20px;
+  margin: 1%;
+  cursor: pointer;
+  color: white;
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+}
+
+.slide h3 {
+  position: absolute;
+  font-size: 65px;
+  font-family: 'Roboto', sans-serif;
+  left: 47%;
+  top: 35%;
+  opacity: 0;
+  transform:translate(-50%, -50%);
+}
+
+.slide.active {
+  flex:10;
+}
+
+.slide.active h3 {
+  opacity: 1;
+  transition: opacity 0.3s ease-in 0.4s;
 }
