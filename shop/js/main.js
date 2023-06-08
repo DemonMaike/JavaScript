@@ -1,10 +1,21 @@
+// create localStorage for cart
 if (!localStorage.getItem('goods')) {
     localStorage.setItem('goods', JSON.stringify([]));
 }
 
+// modal for applay of products
 let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
     keyborad: false,
 })
+
+// for search
+let options = {
+    valueNames: ['name', 'price'],
+}
+let userList
+
+
+// job with local storage
 
 document.querySelector('button.add_new').addEventListener('click', ()=>{
     let name = document.getElementById('good_name').value;
@@ -17,8 +28,8 @@ document.querySelector('button.add_new').addEventListener('click', ()=>{
         let goods = JSON.parse(localStorage.getItem('goods'));
         goods.push(['good_'+goods.length, name, price, count, 0, 0, 0]);
         localStorage.setItem('goods', JSON.stringify(goods));
-        update_goods()
-        myModal.hide()
+        update_goods();
+        myModal.hide();
     } else {
         Swal.fire({
             icon: 'error',
@@ -42,13 +53,13 @@ function update_goods() {
         for (let i=0; i<goods.length; i++) {
             tbody.insertAdjacentHTML('beforeend',
             `
-            <tr class='algin-middle'>
+            <tr class='align-middle'>
                 <td>${i+1}</td>
                 <td class='name'>${goods[i][1]}</td>
                 <td class='price'>${goods[i][2]}</td>
                 <td>${goods[i][3]}</td>
-                <td><button class='goods_delete btn-danger' data-delete='${goods[i][0]}'> &#10006;</button></td>
-                <td><button class='goods_delete btn-danger' data-delete='${goods[i][0]}'> &#10149;</button></td>
+                <td><button class='good_delete btn-danger' data-delete='${goods[i][0]}'> &#10006;</button></td>
+                <td><button class='good_delete btn-primary' data-goods='${goods[i][0]}'> &#10149;</button></td>
             </tr>
             `);
 
@@ -57,21 +68,87 @@ function update_goods() {
                 result_price += goods[i][6]
                 document.querySelector('.cart').insertAdjacentHTML('beforeend',
                 `
-                <tr class='algin-middle'>
+                <tr class='align-middle'>
                     <td>${i+1}</td>
                     <td class='price_name'>${goods[i][1]}</td>
                     <td class='price_one'>${goods[i][2]}</td>
                     <td class='price_count'>${goods[i][4]}</td>
                     <td class='price_discount'><input data-goodid='${goods[i][0]}' type='text' value='${goods[i][5]}' min='0' max='100'></td>
                     <td>${goods[i][6]}</td>
-                    <td><button class='goods_delete btn-danger' data-delete='${goods[i][0]}'> &#10006;</button></td>
+                    <td><button class='goods_delete btn-danger' data-delete='${goods[i][0]}'> &#10006; </button></td>
                 </tr>
                 `);
             }
         }
+        userList = new List('goods', options);
     } else {
         table1.hidden = true;
         table2.hidden = true;
     };
     document.querySelector('.price_result').innerHTML = result_price + '&#8381;'
 }
+
+// listener for 'X' button
+
+document.querySelector('.list').addEventListener('click', (e)=>{
+    if(!e.target.dataset.delete) {
+        return
+    }
+    Swal.fire({
+        title: 'Внимание!',
+        text: 'Вы действительно хотите удалить товар?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Да',
+        cancelButtonText: 'Отмена',
+    }).then((result)=>{
+        if(result.isConfirmed) {
+            let goods = JSON.parse(localStorage.getItem('goods'));
+            for(let i=0; i<goods.length; i++){
+                if(goods[i][0] == e.target.dataset.delete) {
+                    goods.splice(i, 1);
+                    localStorage.setItem('goods', JSON.stringify(goods));
+                    update_goods();
+                }
+            }
+        Swal.fire(
+            'Удалено',
+            'Выбраный товар был успешно удалён.',
+            'success'
+        )
+        }
+    })
+})
+
+// add position in cart
+document.querySelector('.list').addEventListener('click', (e)=>{
+    if(!e.target.dataset.goods){
+        return;
+    }
+    let goods = JSON.parse(localStorage.getItem('goods'));
+    for(let i=0; i<goods.length; i++){
+        if(goods[i][3]>0 && e.target.dataset.goods == goods[i][0]) {
+            goods[i].splice(3, 1, goods[i][3] - 1);
+            goods[i].splice(4, 1, goods[i][4] + 1);
+            localStorage.setItem('goods', JSON.stringify(goods));
+            update_goods();
+        }
+    }
+})
+
+document.querySelector('.cart').addEventListener('click', (e)=>{
+    if(!e.target.dataset.delete){
+        return;
+    }
+    let goods = JSON.parse(localStorage.getItem('goods'));
+    for(let i=0; i<goods.length; i++){
+        if(goods[i][4]>0 && e.target.dataset.delete == goods[i][0]) {
+            goods[i].splice(3, 1, goods[i][3] + 1);
+            goods[i].splice(4, 1, goods[i][4] - 1);
+            localStorage.setItem('goods', JSON.stringify(goods));
+            update_goods();
+        }
+    }
+})
