@@ -188,20 +188,23 @@ document.querySelector('.cart').addEventListener('click', (e)=>{
     }
 })
 
-document.querySelector('.cart').addEventListener('input', function(e) {
+// created handler for write a sale
+
+document.querySelector('.cart').addEventListener('input', (e) => {
     if(!e.target.dataset.goodid) {
         return
     }
-    let goods = JSON.parse(localStorage.getItem('goods'))
-    for(let i=0; i<goods.length; i++) {
-        if(goods[i][0] == e.target.dataset.goodid) {
-            goods[i][5] == e.target.value;
-            goods[i][6] == goods[i][4]*goods[i][2] - goods[i][4]*goods[i][2]*goods[i][5]*0.01
-            localStorage.setItem('goods', JSON.stringify(goods))
+    let goods = JSON.parse(localStorage.getItem('goods'));
+    for(let i=0; i<goods.length; i++){
+        if(goods[i][0] == e.target.dataset.goodid){
+            goods[i][5] = e.target.value;
+            goods[i][6] = goods[i][4] * goods[i][2] - goods[i][4] * goods[i][2] * goods[i][5] * 0.01;
+            localStorage.setItem('goods', JSON.stringify(goods));
             update_goods();
-        //     let input = document.querySelector(`[data-goodid="${goods[i][0]}"]`)
-        //     input.focus();
-        //     input.selectionStart = input.value.length;
+            let input = document.querySelector(`[data-goodid='${goods[i][0]}']`);
+            input.focus();
+            input.selectionStart = input.value.length;
         }
     }
+     
 })
